@@ -20,7 +20,29 @@
     
     self.ball.layer.cornerRadius = self.ball.frame.size.width/2;
     
+    self.loopIsRunning = true;
+    
     [self applyGravity]; //apply basic gravity.
+    
+    [self setValues];
+    
+    self.loopIsRunning = true;
+   
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.1 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+    
+}
+-(void)viewDidAppear:(BOOL)animated{
+    //run PID
+    
+}
+
+-(void)setValues{
+    
+    self.windMagnitude = .2;
+    
+    self.setLocation = self.ball.center.x;
+    
+    
     
     
 }
@@ -35,9 +57,70 @@
     
     gravityBehavior.gravityDirection = gravDirection; // set the direction to go left
     
-    gravityBehavior.magnitude = 2; //this is the value to be changed for varrying 'wind'
+    gravityBehavior.magnitude = .2; //this is the value to be changed for varrying 'wind'
     
     [_animator addBehavior:gravityBehavior];
+    
+}
+
+
+
+#pragma mark - PID
+
+-(void)loop{
+    
+    
+        
+        self.actualLocation = self.ball.center.x;
+        
+        double diff =  self.actualLocation - self.setLocation;
+    
+        NSLog(@"DIF %f",diff);
+    
+    if (diff < 0 ) {
+            //apply 0 force
+        
+        self.direction = CGVectorMake(1.0, 0.0);
+        self.windMagnitude = .2;
+            
+        }else{
+            //set force to a nominal amount (.5)
+            self.direction = CGVectorMake(-1.0, 0.0);
+            self.windMagnitude = .6;
+        
+           
+        }
+   
+            [self applyForce];  //create applying force
+    
+    
+    
+    
+}
+
+-(void)applyForce{
+    
+
+    
+    UIGravityBehavior *newBehavior = [_animator.behaviors objectAtIndex:0];
+    
+    
+        
+    newBehavior.magnitude = _windMagnitude; //this is the value to be changed for varrying 'wind'
+    newBehavior.gravityDirection = self.direction;
+    
+    [_animator removeAllBehaviors];
+    
+    
+    [_animator addBehavior:newBehavior];
+    
+    
+ 
+    
+  
+    
+    
+   
     
 }
 
