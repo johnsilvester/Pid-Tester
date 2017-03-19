@@ -28,7 +28,7 @@ int counter = 0;
     
     self.loopIsRunning = true;
    
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -70,33 +70,36 @@ int counter = 0;
 -(void)loop{
     
     counter++;
-        
-//        self.actualLocation = self.ball.center.x;
-//        
-//        double diff =  self.actualLocation - self.setLocation;
-//    
-//        NSLog(@"DIF %f",diff);
-//    
-//    if (diff < 0 ) {
-//            //apply 0 force
-//        
-//        self.direction = CGVectorMake(1.0, 0.0);
-//        self.windMagnitude = .2;
-//            
-//        }else{
-//            //set force to a nominal amount (.5)
-//            self.direction = CGVectorMake(-1.0, 0.0);
-//            self.windMagnitude = .6;
-//        
-//           
-//        }
-    if (counter == 2) {
-        self.direction = CGVectorMake(-1.0, 0.0);
-         self.windMagnitude = .6;
-        [self applyForce];
-    }
-              //create applying force
     
+    
+        
+        self.actualLocation = self.ball.center.x;
+        
+        double diff =  self.actualLocation - self.setLocation;
+    
+    
+        if (diff < 0 ) {
+            //remove force
+           
+            if (_animator.behaviors.count > 1){
+     
+
+                self.direction = CGVectorMake(1.0, 0.0);
+                self.windMagnitude = -.22;
+                [self applyForce];
+            }
+           
+        }
+        else{
+         
+            //apply force
+            self.direction = CGVectorMake(-1.0, 0.0);
+            self.windMagnitude = .22;
+            [self applyForce];
+            
+        }
+    
+
     
     
     
@@ -108,23 +111,18 @@ int counter = 0;
         
         [_animator removeBehavior:[_animator.behaviors objectAtIndex:_animator.behaviors.count-1]];
         
-    }
+    } else{
     
     UIGravityBehavior *newBehavior = [[UIGravityBehavior alloc] initWithItems:@[self.ball]];
 
-   
-    
     newBehavior.magnitude = _windMagnitude; //this is the value to be changed for varrying 'wind'
     newBehavior.gravityDirection = self.direction;
-    
- 
-    
     
     [_animator addBehavior:newBehavior];
     
     
  
-    
+    }
   
     
     
