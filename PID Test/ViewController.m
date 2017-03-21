@@ -30,7 +30,7 @@ int counter = 0;
     
     self.loopIsRunning = true;
    
-  //  NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+   NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -83,31 +83,19 @@ int counter = 0;
     
     counter++;
     
-    
-        
         self.actualLocation = self.ball.center.x;
         
         double diff =  self.actualLocation - self.setLocation;
     
-    
         if (diff < 0 ) {
             //remove force
            
-            if (_animator.behaviors.count > 1){
-     
-
-                self.direction = CGVectorMake(1.0, 0.0);
-                self.windMagnitude = -.22;
-                [self forceChecker];
-            }
+         
            
         }
         else{
          
-            //apply force
-            self.direction = CGVectorMake(-1.0, 0.0);
-            self.windMagnitude = .22;
-            [self forceChecker];
+           
             
         }
     
