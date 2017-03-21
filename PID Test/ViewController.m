@@ -28,7 +28,7 @@ int counter = 0;
     
     self.loopIsRunning = true;
    
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+  //  NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -50,16 +50,29 @@ int counter = 0;
 -(void)applyGravity{ //gravit is applied horizantally.
     
     _animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    
-    UIGravityBehavior *gravityBehavior = [[UIGravityBehavior alloc] initWithItems:@[self.ball]];
-    
+
     CGVector gravDirection = CGVectorMake(1.0, 0.0);
     
-    gravityBehavior.gravityDirection = gravDirection; // set the direction to go left
+
+    UIDynamicItemBehavior *item = [[UIDynamicItemBehavior alloc]initWithItems:@[self.ball]];
+    item.friction = 10;
+    item.density = 0;
+    item.resistance = .8;
+    item.elasticity = 0;
     
-    gravityBehavior.magnitude = .2; //this is the value to be changed for varrying 'wind'
+    UIPushBehavior *pushBehvaior = [[UIPushBehavior alloc]initWithItems:@[self.ball] mode:UIPushBehaviorModeInstantaneous];
     
-    [_animator addBehavior:gravityBehavior];
+    pushBehvaior.pushDirection = gravDirection;
+    pushBehvaior.magnitude = 1;
+    
+    
+       [_animator addBehavior:pushBehvaior];
+    [_animator addBehavior:item];
+
+    
+ 
+    
+    
     
 }
 
