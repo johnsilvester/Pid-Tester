@@ -22,9 +22,11 @@ int counter = 0;
     
     self.loopIsRunning = true;
     
-    [self applyGravity]; //apply basic gravity.
+    [self setInitValues];
     
-    [self setValues];
+    [self applyForce]; //apply basic gravity.
+    
+   
     
     self.loopIsRunning = true;
    
@@ -36,23 +38,20 @@ int counter = 0;
     
 }
 
--(void)setValues{
+-(void)setInitValues{
     
     self.windMagnitude = .2;
     
     self.setLocation = self.ball.center.x;
-    
-    
+    self.direction = CGVectorMake(1.0, 0.0);
     
     
 }
 //set up gravity
--(void)applyGravity{ //gravit is applied horizantally.
+-(void)applyForce{ //gravit is applied horizantally.
     
     _animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
 
-    CGVector gravDirection = CGVectorMake(1.0, 0.0);
-    
 
     UIDynamicItemBehavior *item = [[UIDynamicItemBehavior alloc]initWithItems:@[self.ball]];
     item.friction = 10;
@@ -62,11 +61,11 @@ int counter = 0;
     
     UIPushBehavior *pushBehvaior = [[UIPushBehavior alloc]initWithItems:@[self.ball] mode:UIPushBehaviorModeInstantaneous];
     
-    pushBehvaior.pushDirection = gravDirection;
+    pushBehvaior.pushDirection = self.direction;
     pushBehvaior.magnitude = 1;
     
     
-       [_animator addBehavior:pushBehvaior];
+    [_animator addBehavior:pushBehvaior];
     [_animator addBehavior:item];
 
     
@@ -99,7 +98,7 @@ int counter = 0;
 
                 self.direction = CGVectorMake(1.0, 0.0);
                 self.windMagnitude = -.22;
-                [self applyForce];
+                [self forceChecker];
             }
            
         }
@@ -108,7 +107,7 @@ int counter = 0;
             //apply force
             self.direction = CGVectorMake(-1.0, 0.0);
             self.windMagnitude = .22;
-            [self applyForce];
+            [self forceChecker];
             
         }
     
@@ -118,7 +117,7 @@ int counter = 0;
     
 }
 
--(void)applyForce{
+-(void)forceChecker{
     
     if (_animator.behaviors.count > 2) {
         
@@ -126,12 +125,8 @@ int counter = 0;
         
     } else{
     
-    UIGravityBehavior *newBehavior = [[UIGravityBehavior alloc] initWithItems:@[self.ball]];
+        [self applyForce];
 
-    newBehavior.magnitude = _windMagnitude; //this is the value to be changed for varrying 'wind'
-    newBehavior.gravityDirection = self.direction;
-    
-    [_animator addBehavior:newBehavior];
     
     
  
