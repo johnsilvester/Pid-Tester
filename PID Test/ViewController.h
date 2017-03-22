@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PID.swift"
+#import "qPIDs.h"
 
 @interface ViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *ball;
@@ -23,15 +23,15 @@
 
 
 
-
+@property (nonatomic) qPID *controller;
 
 @property (nonatomic) double P;
 @property (nonatomic) double I;
 @property (nonatomic) double windMagnitude;
 @property (nonatomic) CGVector direction;
 
-@property (nonatomic) double setLocation;
-@property (nonatomic) double actualLocation;
+@property (nonatomic) float setLocation;
+@property (nonatomic) float actualLocation;
 
 @property (nonatomic) double sumError;
 

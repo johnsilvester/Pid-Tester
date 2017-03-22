@@ -1,91 +1,55 @@
-// -*- mode: c++ -*-
+/*
+ * pid.h
+ *
+ *  Created on: Sep 11, 2009
+ *      Author: pixhawk
+ */
 
-/// @file PID.h
+#ifndef PID_H_
+#define PID_H_
 
-// PID Library
-// Copyright (C) 2012 Jonathan Lamothe <jonathan@jlamothe.net>
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
-// This program is free software: you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
+typedef struct {
+		float kp;
+		float ki;
+		float kd;
 
-// This program is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
+		float sp;
+		float integral;
+		float error_previous;
 
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see: http://www.gnu.org/licenses/
+        unsigned int features;
+		float intmax;
+        float sat_max;
+        float sat_min;
+} PID_t;
 
-#ifndef PID_H
-#define PID_H
+typedef enum {
+    PID_ENABLE_WINDUP   =   (1<<0),
+    PID_DEBUG           =   (1<<1),
+    PID_OUTPUT_SAT_MIN  =   (1<<2),
+    PID_OUTPUT_SAT_MAX  =   (1<<3),
+    PID_INPUT_HIST      =   (1<<4)
+} PIDFeatures_t;
 
-//
-// CLASSES
-//
+void    pid_init                                    (PID_t          *pid, 
+                                                     float          kp, 
+                                                     float          ki, 
+                                                     float          kd);
+void    pid_enable_feature                          (PID_t          *pid, 
+                                                     unsigned int   feature,
+                                                     float          value);
+void    pid_set                                     (PID_t          *pid,
+                                                     float          sp);
+float   pid_calculate                               (PID_t          *pid,
+                                                     float          val,
+                                                     float          dt);
 
-/// @brief PID loop object.
-class PID
-{
-public:
+#ifdef  __cplusplus
+}
+#endif
 
-    double p_factor,            ///< @brief Proportional factor.
-        i_factor,               ///< @brief Integral factor.
-        d_factor,               ///< @brief Derivitive factor.
-        bias,                   ///< @brief Output bias.
-        min_i,                  ///< @brief Minimum integral.
-        max_i,                  ///< @brief Maximum integral.
-        min_out,                ///< @brief Minimum output.
-        max_out;                ///< @brief Maximum output.
-
-    /// @brief Indicates a reverse-action PID loop.
-    bool reverse;
-
-    /// @brief Constructor.
-    /// @param p Proportional factor.
-    /// @param i Integral factor.
-    /// @param d Derivitive factor.
-    /// @param b Output bias.
-    /// @param r Indicates a reverse-action PID loop.
-    PID(double p, double i, double d, double b = 0, bool r = false);
-
-    /// @brief Resets the PID loop.
-    void reset();
-
-    /// @brief Calculates the current PID output.
-    /// @param act The measured value.
-    /// @pâram sp The desired setpoint.
-    /// @param dt The time since the last calculation.
-    /// @return The calculated output.
-    double process(double act, double sp, double dt);
-
-private:
-
-    double last_err,            ///< @brief The last error value.
-        last_i;                 ///< @brief The last integral value.
-
-    /// @brief Calculates the integral value.
-    /// @param err The current error value.
-    /// @param dt The time since the last calculation.
-    /// @return The calculated value.
-    double calc_i(double err, double dt);
-
-    /// @brief Calculates the derivitive value.
-    /// @param err The current error value.
-    /// @param dt The time since the last calculation.
-    /// @return The calculated value.
-    double calc_d(double err, double dt);
-
-    /// @brief Calculates the final output value.
-    /// @param p The proportional value.
-    /// @param i The integral value.
-    /// @param d The derivitive value.
-    /// @return The calculated output.
-    double calc_out(double p, double i, double d);
-
-};
-
-#endif  // PID_H
-
-// jl
+#endif /* PID_H_ */

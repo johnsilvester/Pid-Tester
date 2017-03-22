@@ -29,11 +29,10 @@ double diffI = 0;
     
     [self applyForce]; //apply basic gravity.
     
-   
-    
+
     self.loopIsRunning = true;
    
-   NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.05 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+  NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.05 target:self selector:@selector(loop) userInfo:nil repeats:YES];
     
  
 
@@ -51,7 +50,7 @@ double diffI = 0;
     self.setLocation = self.ball.center.x;
     self.direction = CGVectorMake(1.0, 0.0);
     
-    self.P = 20;
+    self.P = 2;
     self.I = .5;
     
     
@@ -64,8 +63,8 @@ double diffI = 0;
 
     UIDynamicItemBehavior *item = [[UIDynamicItemBehavior alloc]initWithItems:@[self.ball]];
     item.friction = 10;
-    item.density = 0;
-    item.resistance = .8;
+    item.density = 1;
+    item.resistance = 7;
     item.elasticity = 0;
     
     UIPushBehavior *pushBehvaior = [[UIPushBehavior alloc]initWithItems:@[self.ball] mode:UIPushBehaviorModeInstantaneous];
@@ -102,25 +101,20 @@ double diffI = 0;
     
         diffI = self.I * diffI;
     
-        self.windMagnitude = diffP + diffI;
+        self.windMagnitude = (diffP + diffI)/2;
     
         double direction = self.windMagnitude;
     
         self.windMagnitude = 1;
     
-    
         self.direction = CGVectorMake(direction, 0);
-   
     
-
+ 
+        
         [self forceChecker];
-            
-      
+    
     
 
-    
-    
-    
 }
 
 -(void)forceChecker{
@@ -133,18 +127,64 @@ double diffI = 0;
     
         [self applyForce];
 
-    
-    
- 
     }
-  
     
     
-   
+}
+#pragma mark - PID in C //probabaly not using
+-(void)examplePID{
+    
+    // Declare de new object
+    qPID controller;
+    
+    // Configure settings
+    controller.AntiWindup = DISABLED;
+    controller.Bumpless = DISABLED;
+    
+    // Set mode to auotmatic (otherwise it will be in manual mode)
+    controller.Mode = AUTOMATIC;
+    
+    
+    // Configure de output limits for clamping
+    controller.OutputMax = 1000;
+    controller.OutputMin = -1000;
+    
+    // Set the rate at the PID will run in seconds
+    controller.Ts = 0.005;
+    
+    // More settings
+    controller.b = 1.0;
+    controller.c = 1.0;
+    
+    // Init de controller
+    qPID_Init(&controller);
+    
+    // Set the tunning constants
+    controller.K = 0.5;
+    controller.Ti = 1/0.02;
+    controller.Td = 0.0;
+    controller.Nd = 4.0;
+    
+  //  while (1){
+        
+        
+        //sensor = readSensor();				// update the process variable
+        //setPoint = readSetPoint(); 			// update the user desired value
+        
+        // Update the PID and get the new output
+        float output = qPID_Procees(&controller, self.setLocation, self.actualLocation);
+        
+        //replace method setActuator(output); // update the actuator input
+        
+        self.direction = CGVectorMake(output*1.4, 0);
+    
+        
+   // }
     
 }
 
 
+#pragma mark - actions
 
 
 - (IBAction)pStepper:(UIStepper*)sender {
@@ -156,4 +196,5 @@ double diffI = 0;
     self.I =sender.value/10;
     self.iLabel.text = [NSString stringWithFormat:@"%f",self.I];
 }
+
 @end
