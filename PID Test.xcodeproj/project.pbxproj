@@ -13,6 +13,7 @@
 		522828691E7D9DD900F7109B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 522828671E7D9DD900F7109B /* Main.storyboard */; };
 		5228286B1E7D9DD900F7109B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5228286A1E7D9DD900F7109B /* Assets.xcassets */; };
 		5228286E1E7D9DD900F7109B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5228286C1E7D9DD900F7109B /* LaunchScreen.storyboard */; };
+		528384BA1E818CDD0080A597 /* PID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 528384B81E818CDD0080A597 /* PID.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,9 @@
 		5228286A1E7D9DD900F7109B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5228286D1E7D9DD900F7109B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5228286F1E7D9DD900F7109B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		528384B81E818CDD0080A597 /* PID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PID.cpp; sourceTree = "<group>"; };
+		528384B91E818CDD0080A597 /* PID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PID.h; sourceTree = "<group>"; };
+		528384BB1E81A9720080A597 /* PID Test-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PID Test-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +62,7 @@
 		5228285D1E7D9DD800F7109B /* PID Test */ = {
 			isa = PBXGroup;
 			children = (
+				528384B51E818CC60080A597 /* PID */,
 				522828611E7D9DD800F7109B /* AppDelegate.h */,
 				522828621E7D9DD800F7109B /* AppDelegate.m */,
 				522828641E7D9DD800F7109B /* ViewController.h */,
@@ -77,6 +82,16 @@
 				5228285F1E7D9DD800F7109B /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		528384B51E818CC60080A597 /* PID */ = {
+			isa = PBXGroup;
+			children = (
+				528384B81E818CDD0080A597 /* PID.cpp */,
+				528384B91E818CDD0080A597 /* PID.h */,
+				528384BB1E81A9720080A597 /* PID Test-Bridging-Header.h */,
+			);
+			name = PID;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -111,6 +126,7 @@
 					5228285A1E7D9DD800F7109B = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 73G9MWFUKP;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -152,6 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				522828661E7D9DD800F7109B /* ViewController.m in Sources */,
+				528384BA1E818CDD0080A597 /* PID.cpp in Sources */,
 				522828631E7D9DD800F7109B /* AppDelegate.m in Sources */,
 				522828601E7D9DD800F7109B /* main.m in Sources */,
 			);
@@ -271,11 +288,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 73G9MWFUKP;
 				INFOPLIST_FILE = "PID Test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Com.FlyPhone.PID-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "PID Test/PID Test-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -283,11 +304,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 73G9MWFUKP;
 				INFOPLIST_FILE = "PID Test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Com.FlyPhone.PID-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "PID Test/PID Test-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -310,6 +334,7 @@
 				522828741E7D9DD900F7109B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

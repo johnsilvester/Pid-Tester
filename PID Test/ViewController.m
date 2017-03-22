@@ -8,12 +8,15 @@
 
 #import "ViewController.h"
 
+
 @interface ViewController ()
 
 @end
 
 @implementation ViewController
 int counter = 0;
+double diffI = 0;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -30,7 +33,10 @@ int counter = 0;
     
     self.loopIsRunning = true;
    
-   NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.5 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+   NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.05 target:self selector:@selector(loop) userInfo:nil repeats:YES];
+    
+ 
+
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -44,6 +50,9 @@ int counter = 0;
     
     self.setLocation = self.ball.center.x;
     self.direction = CGVectorMake(1.0, 0.0);
+    
+    self.P = 20;
+    self.I = .5;
     
     
 }
@@ -85,19 +94,28 @@ int counter = 0;
     
         self.actualLocation = self.ball.center.x;
         
-        double diff =  self.actualLocation - self.setLocation;
+        double diff =  self.setLocation - self.actualLocation;
     
-        if (diff < 0 ) {
-            //remove force
-           
-         
-           
-        }
-        else{
-         
-           
+        double diffP = diff * self.P;
+    
+        diffI += diff;
+    
+        diffI = self.I * diffI;
+    
+        self.windMagnitude = diffP + diffI;
+    
+        double direction = self.windMagnitude;
+    
+        self.windMagnitude = 1;
+    
+    
+        self.direction = CGVectorMake(direction, 0);
+   
+    
+
+        [self forceChecker];
             
-        }
+      
     
 
     
@@ -129,4 +147,13 @@ int counter = 0;
 
 
 
+- (IBAction)pStepper:(UIStepper*)sender {
+    self.P =sender.value;
+    self.pLabel.text = [NSString stringWithFormat:@"%f",self.P];
+}
+
+- (IBAction)iStepper:(UIStepper*)sender {
+    self.I =sender.value/10;
+    self.iLabel.text = [NSString stringWithFormat:@"%f",self.I];
+}
 @end

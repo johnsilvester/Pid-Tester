@@ -7,12 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PID.swift"
 
 @interface ViewController : UIViewController
 @property (strong, nonatomic) IBOutlet UIImageView *ball;
 @property(strong,nonnull) UIDynamicAnimator *animator;
 
 @property(strong,nonatomic) UIGravityBehavior *pidBehavior;
+- (IBAction)pStepper:(id)sender;
+- (IBAction)iStepper:(id)sender;
+
+@property (strong, nonatomic) IBOutlet UILabel *pLabel;
+
+@property (strong, nonatomic) IBOutlet UILabel *iLabel;
+
+
 
 
 
