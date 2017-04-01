@@ -16,12 +16,15 @@
 @property(strong,nonatomic) UIGravityBehavior *pidBehavior;
 - (IBAction)pStepper:(id)sender;
 - (IBAction)iStepper:(id)sender;
+- (IBAction)buttonRandom:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UILabel *pLabel;
 
 @property (strong, nonatomic) IBOutlet UILabel *iLabel;
 
+- (IBAction)callPID:(id)sender;
 
+@property (strong, nonatomic) IBOutlet UIButton *goalButton;
 
 @property (nonatomic) qPID *controller;
 

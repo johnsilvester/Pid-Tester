@@ -14,14 +14,17 @@
 @end
 
 @implementation ViewController
-int counter = 0;
+int iCounter = 0;
 double diffI = 0;
+double change = 0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
+    self.ball.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
     self.ball.layer.cornerRadius = self.ball.frame.size.width/2;
+    self.goalButton.layer.backgroundColor = (__bridge CGColorRef _Nullable)([UIColor grayColor]);
+    self.goalButton.layer.borderWidth = 5;
     
     self.loopIsRunning = true;
     
@@ -29,55 +32,55 @@ double diffI = 0;
     
     [self applyForce]; //apply basic gravity.
     
-
-    self.loopIsRunning = true;
-   
-  NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:.05 target:self selector:@selector(loop) userInfo:nil repeats:YES];
     
- 
-
+    //NSTimer *pidTimer = [NSTimer scheduledTimerWithTimeInterval:.05 target:self selector:@selector(loop) userInfo:nil repeats:YES]; //rather than while loop using timer to run PID function, for debug purposes
+    
+   
+    
     
 }
 -(void)viewDidAppear:(BOOL)animated{
     //run PID
-    
+   
 }
 
 -(void)setInitValues{
     
-    self.windMagnitude = .2;
-    
-    self.setLocation = self.ball.center.x;
+    self.setLocation = self.ball.center.x; // set init location as center of screen for goal state of PID
     self.direction = CGVectorMake(1.0, 0.0);
     
-    self.P = 2;
-    self.I = .5;
+    self.P = 2; // init P
+    self.I = .5; // init I
     
+    self.windMagnitude = 1;
     
 }
 //set up gravity
--(void)applyForce{ //gravit is applied horizantally.
+-(void)applyForce{ //gravit is initially applied horizantally.
+    
+    //NOTE: applyForce is called everytime the loop runs but runs with updated values based on PID loop
+    
     
     _animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-
-
-    UIDynamicItemBehavior *item = [[UIDynamicItemBehavior alloc]initWithItems:@[self.ball]];
+    
+    
+    UIDynamicItemBehavior *item = [[UIDynamicItemBehavior alloc]initWithItems:@[self.ball]]; // add physics behaviors on ball
     item.friction = 10;
     item.density = 1;
-    item.resistance = 7;
+    item.resistance = 3;
     item.elasticity = 0;
     
     UIPushBehavior *pushBehvaior = [[UIPushBehavior alloc]initWithItems:@[self.ball] mode:UIPushBehaviorModeInstantaneous];
     
-    pushBehvaior.pushDirection = self.direction;
-    pushBehvaior.magnitude = 1;
+    pushBehvaior.pushDirection = self.direction; // create a push with a basic direction of CGVectorMake(1.0, 0.0);
+    pushBehvaior.magnitude = self.windMagnitude; //keep constant speed of one
     
     
     [_animator addBehavior:pushBehvaior];
-    [_animator addBehavior:item];
-
+    [_animator addBehavior:item]; // adds the behaviors and excutes.
     
- 
+    
+    
     
     
     
@@ -89,99 +92,63 @@ double diffI = 0;
 
 -(void)loop{
     
-    counter++;
-    
-        self.actualLocation = self.ball.center.x;
+    @synchronized (self) {
+        iCounter ++; // used for division of I
         
-        double diff =  self.setLocation - self.actualLocation;
-    
-        double diffP = diff * self.P;
-    
-        diffI += diff;
-    
-        diffI = self.I * diffI;
-    
-        self.windMagnitude = (diffP + diffI)/2;
-    
-        double direction = self.windMagnitude;
-    
-        self.windMagnitude = 1;
-    
-        self.direction = CGVectorMake(direction, 0);
-    
- 
+        self.actualLocation = self.ball.center.x; // represents actual location of ball
         
-        [self forceChecker];
-    
-    
+        double diff =  self.setLocation - self.actualLocation; // find the difference between center of screen and ball location
+        
+       //double diffP = diff + self.P; // multiply diff by P
+        double diffP = diff; // multiply diff by P
 
+        
+        diffI += diff; //sum up all the differences
+        
+        double avgDiffI = diffI / iCounter; // gives an average of differences
+        
+        avgDiffI = self.I * avgDiffI; // multiply average by  I factor
+        
+        if (diff == 0) {
+            self.windMagnitude = 0;
+            
+
+        }else{
+            self.windMagnitude = 1; // set magnitude for I
+            
+            self.direction = CGVectorMake(diff, 0); //combine I and P for a direction and power
+            
+            //change = (diffP +diffI)/2;
+            
+            [self forceChecker];
+        }
+        
+        
+        NSLog(@"diffP: %f, diff: %f, center:%f",diffP,diff,self.actualLocation+diff);
+    }
+    
+    
+    
+    
 }
 
--(void)forceChecker{
+-(void)forceChecker{ //failsafe not to break the UIDynamicAnimator
     
+    
+   
     if (_animator.behaviors.count > 2) {
         
-        [_animator removeBehavior:[_animator.behaviors objectAtIndex:_animator.behaviors.count-1]];
+        [_animator removeBehavior:[_animator.behaviors objectAtIndex:_animator.behaviors.count-1]]; //if too many behaviors stack up, will remove some.
         
     } else{
-    
-        [self applyForce];
-
+        
+        [self applyForce]; // will apply updated for values based on results from PID
+        
     }
     
     
 }
-#pragma mark - PID in C //probabaly not using
--(void)examplePID{
-    
-    // Declare de new object
-    qPID controller;
-    
-    // Configure settings
-    controller.AntiWindup = DISABLED;
-    controller.Bumpless = DISABLED;
-    
-    // Set mode to auotmatic (otherwise it will be in manual mode)
-    controller.Mode = AUTOMATIC;
-    
-    
-    // Configure de output limits for clamping
-    controller.OutputMax = 1000;
-    controller.OutputMin = -1000;
-    
-    // Set the rate at the PID will run in seconds
-    controller.Ts = 0.005;
-    
-    // More settings
-    controller.b = 1.0;
-    controller.c = 1.0;
-    
-    // Init de controller
-    qPID_Init(&controller);
-    
-    // Set the tunning constants
-    controller.K = 0.5;
-    controller.Ti = 1/0.02;
-    controller.Td = 0.0;
-    controller.Nd = 4.0;
-    
-  //  while (1){
-        
-        
-        //sensor = readSensor();				// update the process variable
-        //setPoint = readSetPoint(); 			// update the user desired value
-        
-        // Update the PID and get the new output
-        float output = qPID_Procees(&controller, self.setLocation, self.actualLocation);
-        
-        //replace method setActuator(output); // update the actuator input
-        
-        self.direction = CGVectorMake(output*1.4, 0);
-    
-        
-   // }
-    
-}
+
 
 
 #pragma mark - actions
@@ -197,4 +164,25 @@ double diffI = 0;
     self.iLabel.text = [NSString stringWithFormat:@"%f",self.I];
 }
 
+- (IBAction)buttonRandom:(UIButton *)sender {
+    
+    
+  
+    
+    UIPushBehavior *pushBehvaior = [[UIPushBehavior alloc]initWithItems:@[self.ball] mode:UIPushBehaviorModeInstantaneous];
+    
+    pushBehvaior.pushDirection = CGVectorMake(1, 0); // create a push with a basic direction of CGVectorMake(1.0, 0.0);
+    pushBehvaior.magnitude = 4; //keep constant speed of one
+    
+    
+    [_animator addBehavior:pushBehvaior]; // adds the behaviors and excutes.
+    
+}
+
+- (IBAction)callPID:(id)sender {
+    
+    
+        [self loop];
+    
+}
 @end
